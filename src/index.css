@@ -1,0 +1,57 @@
+:root {
+  --main-header-color: #ffcf73;
+  --card-header-color: #ffecc9;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.containbody {
+  background-color: rgba(252, 250, 250, 0.945);
+}
+
+.header {
+  background-color: var(--main-header-color);
+  height: 90px;
+  padding-top: 1%;
+}
+
+.card-heading {
+  background-color: var(--card-header-color);
+  height: 40px;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  padding-left: 1.5%;
+  color: #212529;
+}
+
+.image-style {
+  width: 15rem;
+  height: 15rem;
+}
+
+.login-heading {
+  background-color: #84dad5;
+  height: 40px;
+  width: 100%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  padding-left: 1.5%;
+  align-content: initial;
+  color: #212529;
+}
+
+.name-header {
+  margin-left: 1100px;
+}
