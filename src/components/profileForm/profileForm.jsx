@@ -41,6 +41,7 @@ class ProfileForm extends Component{
            education: this.props.parent_to_child.education,
            experience: this.props.parent_to_child.experience,
            formMode: this.props.parent_to_child.formMode,
+           gender: "",
 
            editState: false,
 
@@ -95,7 +96,8 @@ class ProfileForm extends Component{
             expEndDate: "",
             education: [],
             experience: [],
- 
+            gender: "",
+
             editState: false,
  
             editSchool: "",
@@ -232,6 +234,8 @@ class ProfileForm extends Component{
 
       handleSubmit = (e) => {
         const userId = ls.get("userid")
+        const gender = ls.get("gender")
+
         console.log(userId)
         const isValid = this.validateSubmit();
         if (isValid) {
@@ -246,10 +250,10 @@ class ProfileForm extends Component{
             education: this.state.education,
             experience: this.state.experience,
             user_id: userId,
+            gender: gender
           };
     
           console.log(JSON.stringify(data));
-    
           fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/createProfile/", {
             method: "POST",
             headers: {
