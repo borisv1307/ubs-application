@@ -275,6 +275,7 @@ class ProfileForm extends Component{
       handleEditSubmit = (mode) => (e) => {
         
         const userId = ls.get("userid")
+        const gender = ls.get("gender")
         const isValid = this.validateSubmit();
         const profile_id = this.props.parent_to_child.profile_id;
         if (isValid) {
@@ -289,11 +290,11 @@ class ProfileForm extends Component{
             education: this.state.education,
             experience: this.state.experience,
             user_id: userId,
-            profile_id: profile_id
+            profile_id: profile_id,
+            gender: gender
           };
     
           console.log(JSON.stringify(data));
-    
           fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/editProfile/", {
             method: "PUT",
             headers: {
