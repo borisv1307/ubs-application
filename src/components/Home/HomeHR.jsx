@@ -11,18 +11,32 @@ class HomeHR extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataDoughnut: {
-        labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
+      dataDoughnutMale: {
+        labels: ["Accepted", "Rejected"],
         datasets: [
           {
-            data: [300, 50, 100, 40, 120],
-            backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],
+            data: [300, 50],
+            backgroundColor: ["#F7464A", "#FDB45C"],
             hoverBackgroundColor: [
               "#FF5A5E",
-              "#5AD3D1",
-              "#FFC870",
-              "#A8B3C5",
-              "#616774"
+
+              "#FFC870"
+
+            ]
+          }
+        ]
+      },
+      dataDoughnutFemale: {
+        labels: ["Accepted", "Rejected"],
+        datasets: [
+          {
+            data: [300, 50],
+            backgroundColor: ["#F7464A", "#FDB45C"],
+            hoverBackgroundColor: [
+              "#FF5A5E",
+
+              "#FFC870"
+
             ]
           }
         ]
@@ -88,11 +102,18 @@ class HomeHR extends Component {
 
     const reviewer_id = ls.get("userid")
     const dataHorizontal = this.state.dataHorizontal;
+    const dataDoughnutMale = this.state.dataDoughnutMale;
+    const dataDoughnutFemale = this.state.dataDoughnutFemale;
     fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id)
       .then((res) => res.json())
       .then((res) => {
+
         dataHorizontal.datasets[0].data = [res.accepted_count, res.declined_count];
-        this.setState({ dataHorizontal })
+        dataDoughnutMale.datasets[0].data = [res.accepted_male_count, res.declined_male_count];
+        dataDoughnutFemale.datasets[0].data = [res.accepted_female_count, res.declined_female_count];
+
+        this.setState({ dataHorizontal, dataDoughnutMale, dataDoughnutFemale })
+
       })
 
 
@@ -124,36 +145,37 @@ class HomeHR extends Component {
               View real applications and see where your biases lie statistically
             </h5>
             <br />
-            <br /> 
-            <Tabs defaultActiveKey="ApplicationInsight" transition={false} id="noanim-tab-example">
-              <Tab eventKey="ApplicationInsight" title=" Application Insight ">
-                <div>
-                  <br />
-                  <h3 className="text-center"> Application Insight </h3>
-                  <HorizontalBarGraph inputData={this.state.dataHorizontal} barChartOptions={this.barChartOptions} height={450} />
-                </div>
-              </Tab>
+            <br />
+            <Tabs defaultActiveKey="Rate" transition={false} id="noanim-tab-example">
+
 
               <Tab eventKey="Rate" title=" Categories Rate% ">
                 <Row>
                   <Col>
                     <br /><br />     <br /><br />
 
-                    <h3 className="text-center">Acceptance Categories</h3>
+                    <h3 className="text-center">Male Application Analysis</h3>
                     <br />
-                    <DoughnutChart inputData={this.state.dataDoughnut} height={220} />
+                    <DoughnutChart inputData={this.state.dataDoughnutMale} height={220} />
 
                   </Col>
                   <Col>
                     <br /><br />     <br /><br />
 
-                    <h3 className="text-center">Rejection Categories</h3>
+                    <h3 className="text-center">Female Application Analysis</h3>
                     <br />
-                    <DoughnutChart inputData={this.state.dataDoughnut} height={220} />
+                    <DoughnutChart inputData={this.state.dataDoughnutFemale} height={220} />
 
                   </Col>
                 </Row>
                 <br />
+              </Tab>
+              <Tab eventKey="ApplicationInsight" title=" Application Insight ">
+                <div>
+                  <br />
+                  <h3 className="text-center"> Application Insight </h3>
+                  <HorizontalBarGraph inputData={this.state.dataHorizontal} barChartOptions={this.barChartOptions} height={450} />
+                </div>
               </Tab>
             </Tabs>
 
