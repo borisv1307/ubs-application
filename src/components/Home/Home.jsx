@@ -33,32 +33,16 @@ class Home extends Component {
             label: 'Acceptance',
             data: [],
             fill: false,
-            backgroundColor: [
-              "rgba(98,  182, 239,0.4)",
-              "rgba(98,  182, 239,0.4)",
-              "rgba(98,  182, 239,0.4)"
-            ],
-            borderColor: [
-              "rgba(98,  182, 239, 1)",
-              "rgba(98,  182, 239, 1)",
-              "rgba(98,  182, 239, 1)"
-            ],
+            backgroundColor: [],
+            borderColor: [],
             borderWidth: 1
           },
           {
             label: 'Rejection',
             data: [],
             fill: false,
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(255, 99, 132, 0.2)'
-            ],
-            borderColor: [
-              'rgb(255, 99, 132)',
-              'rgb(255, 99, 132)',
-              'rgb(255, 99, 132)'
-            ],
+            backgroundColor: [],
+            borderColor: [],
             borderWidth: 1
           }
         ]
@@ -85,6 +69,12 @@ class Home extends Component {
     }
 
     const user_id = ls.get("userid")
+    
+    const acceptBgColor = "rgba(98,  182, 239,0.4)"
+    const acceptBorderColor = "rgba(98,  182, 239, 1)"
+    const rejectBgColor = "rgba(255, 99, 132, 0.2)"
+    const rejectBorderColor = "rgb(255, 99, 132)"
+    
     const dataHorizontal = this.state.dataHorizontal;
 
     var acceptance = []
@@ -94,18 +84,19 @@ class Home extends Component {
       .then((res) => res.json())
       .then((res) => {
         dataHorizontal.labels = Object.keys(res)
-        console.log(dataHorizontal.labels)
 
         Object.keys(res).forEach(function(key) {
           acceptance.push(res[key]["accepted"])
           rejection.push(res[key]["declined"])
         });
 
-        console.log(acceptance)
-        console.log(rejection)
-
         dataHorizontal.datasets[0].data = acceptance;
+        dataHorizontal.datasets[0].backgroundColor = new Array(acceptance.length).fill(acceptBgColor);
+        dataHorizontal.datasets[0].borderColor = new Array(acceptance.length).fill(acceptBorderColor);
+      
         dataHorizontal.datasets[1].data = rejection;
+        dataHorizontal.datasets[1].backgroundColor = new Array(rejection.length).fill(rejectBgColor);
+        dataHorizontal.datasets[1].borderColor = new Array(rejection.length).fill(rejectBorderColor);
 
         this.setState({ dataHorizontal })
         
