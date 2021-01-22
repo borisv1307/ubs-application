@@ -385,6 +385,7 @@ class Register extends Component {
                         <option value="Pacific Islander">Pacific Islander</option>
                         <option value="White">White</option>
                         <option value="Other">Other</option>
+                        <option value="Prefer Not To Say">Prefer Not To Say</option>
                       </Form.Control>
                     </Form.Group>
                   </Col>
