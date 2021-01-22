@@ -29,6 +29,7 @@ describe("Register", () => {
     expect(wrapper.find("#password").length).toEqual(1);
     expect(wrapper.find("#registration_type").length).toEqual(1);
     expect(wrapper.find("#gender").length).toEqual(1);
+    expect(wrapper.find("#ethnicity").length).toEqual(1);
     expect(wrapper.find("#date_of_birth").length).toEqual(1);
   });
 
@@ -41,6 +42,7 @@ describe("Register", () => {
     expect(wrapper.find("#password").length).toEqual(1);
     expect(wrapper.find("#registration_type").length).toEqual(1);
     expect(wrapper.find("#gender").length).toEqual(1);
+    expect(wrapper.find("#ethnicity").length).toEqual(1);
     expect(wrapper.find("#date_of_birth").length).toEqual(1);
     expect(wrapper.find("#address").length).toEqual(1);
     expect(wrapper.find("#address2").length).toEqual(1);
@@ -60,6 +62,7 @@ describe("Register", () => {
     expect(wrapper.find("#password").length).toEqual(1);
     expect(wrapper.find("#registration_type").length).toEqual(1);
     expect(wrapper.find("#gender").length).toEqual(1);
+    expect(wrapper.find("#ethnicity").length).toEqual(1);
     expect(wrapper.find("#date_of_birth").length).toEqual(1);
   });
 
@@ -70,6 +73,7 @@ describe("Register", () => {
     const passwordInput = simulateChangeOnInput(wrapper, "#password", "Test123!");
     const registrationTypeInput = simulateChangeOnInput(wrapper, "#registration_type", "Job Seeker");
     const genderInput = simulateChangeOnInput(wrapper, "#gender", "Male");
+    const ethnicityInput = simulateChangeOnInput(wrapper, "#ethnicity", "Asian");
     const dateOfBirthInput = simulateChangeOnInput(wrapper, "#date_of_birth", "2000-01-01")
     const address1Input = simulateChangeOnInput(wrapper, "#address", "1234 Test Street");
     const address2Input = simulateChangeOnInput(wrapper, "#address2", "Apartment 1");
@@ -84,6 +88,7 @@ describe("Register", () => {
     expect(passwordInput.props().value).toEqual("Test123!");
     expect(registrationTypeInput.props().value).toEqual("Job Seeker");
     expect(genderInput.props().value).toEqual("Male");
+    expect(ethnicityInput.props().value).toEqual("Asian");
     expect(dateOfBirthInput.props().value).toEqual("2000-01-01");
     expect(address1Input.props().value).toEqual("1234 Test Street");
     expect(address2Input.props().value).toEqual("Apartment 1");
@@ -100,6 +105,7 @@ describe("Register", () => {
                         "email": "jdoe@test.com",
                         "password": "12345",
                         "gender": "Male",
+                        "ethnicity": "Asian",
                         "date_of_birth": "2020-01-01",
                         "registration_type": "Job Seeker",
                         "address": "1234 Test Street",
@@ -126,6 +132,7 @@ describe("Register", () => {
                         "email": "jdoe@test.com",
                         "password": "12345",
                         "gender": "Male",
+                        "ethnicity": "Asian",
                         "date_of_birth": "2020-01-01",
                         "registration_type": "HR Professional" }, () => {
 
@@ -146,6 +153,7 @@ describe("Register", () => {
                         "email": "",
                         "password": "",
                         "gender": "",
+                        "ethnicity": "",
                         "date_of_birth": "",
                         "registration_type": "",
                         "address": "",
@@ -170,6 +178,7 @@ describe("Register", () => {
                         "email": "jdoe@test.com",
                         "password": "12345",
                         "gender": "Male",
+                        "ethnicity": "Asian",
                         "date_of_birth": "2020-01-01",
                         "registration_type": "Job Seeker",
                         "address": "1234 Test Street",
@@ -194,6 +203,7 @@ describe("Register", () => {
                         "email": "jdoe@test.com",
                         "password": "12345",
                         "gender": "Male",
+                        "ethnicity": "Asian",
                         "date_of_birth": "2020-01-01",
                         "registration_type": "Job Seeker",
                         "address": "1234 Test Street",
@@ -218,6 +228,7 @@ describe("Register", () => {
                         "email": "jdoe@test.com",
                         "password": "12345",
                         "gender": "Male",
+                        "ethnicity": "Asian",
                         "date_of_birth": "2020-01-01",
                         "registration_type": "Job Seeker",
                         "address": "1234 Test Street",
@@ -242,6 +253,7 @@ describe("Register", () => {
                         "email": "jdoetest.com",
                         "password": "12345",
                         "gender": "Male",
+                        "ethnicity": "Asian",
                         "date_of_birth": "2020-01-01",
                         "registration_type": "Job Seeker",
                         "address": "1234 Test Street",
@@ -266,6 +278,7 @@ describe("Register", () => {
                         "email": "jdoe@testcom",
                         "password": "12345",
                         "gender": "Male",
+                        "ethnicity": "Asian",
                         "date_of_birth": "2020-01-01",
                         "registration_type": "Job Seeker",
                         "address": "1234 Test Street",

@@ -19,6 +19,7 @@ class Register extends Component {
     email: "",
     password: "",
     gender: "",
+    ethnicity: "",
     date_of_birth: "",
     registration_type: "",
     contact_details: [],
@@ -96,6 +97,7 @@ class Register extends Component {
       password: this.state.password,
       registration_type: this.state.registration_type,
       gender: this.state.gender,
+      ethnicity: this.state.ethnicity,
       date_of_birth: this.state.date_of_birth,
       contact_details: [contactInfo],
     };
@@ -125,6 +127,7 @@ class Register extends Component {
       !this.state.email ||
       !this.state.password ||
       !this.state.gender ||
+      !this.state.ethnicity ||
       !this.state.date_of_birth ||
       !this.state.address ||
       !this.state.address2 ||
@@ -173,6 +176,7 @@ class Register extends Component {
         email: "",
         password: "",
         gender: "",
+        ethnicity: "",
         date_of_birth: "",
         registration_type: "",
         contact_details: [],
@@ -357,6 +361,30 @@ class Register extends Component {
                         <option value="Prefer Not To Say">
                           Prefer Not To Say
                         </option>
+                      </Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group>
+                      <Form.Label>Ethnicity</Form.Label>
+                      <Form.Control
+                        as="select"
+                        value={this.state.ethnicity}
+                        onChange={this.updateField("ethnicity")}
+                        id="ethnicity"
+                        name="ethnicity"
+                      >
+                        <option value="" selected disabled hidden>
+                          {" "}
+                          Ethnicity{" "}
+                        </option>
+                        <option value="American Indian">American Indian</option>
+                        <option value="Asian">Asian</option>
+                        <option value="Black or African American">Black or African American</option>
+                        <option value="Hispanic or Latino">Hispanic or Latino</option>
+                        <option value="Pacific Islander">Pacific Islander</option>
+                        <option value="White">White</option>
+                        <option value="Other">Other</option>
                       </Form.Control>
                     </Form.Group>
                   </Col>
