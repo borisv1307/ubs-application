@@ -47,6 +47,7 @@ class Login extends Component {
             ls.set("userid", res.user_id);
             ls.set("name", res.first_name);
             ls.set("gender", res.gender)
+            ls.set("ethnicity", res.ethnicity)
             ls.set("token", res.token);
             ls.set("registrationtype", res.registration_type);
             ls.set("email", res.email);
