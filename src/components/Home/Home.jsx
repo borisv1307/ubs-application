@@ -97,7 +97,7 @@ class Home extends Component {
         dataHorizontal.datasets[1].data = rejection;
         dataHorizontal.datasets[1].backgroundColor = new Array(rejection.length).fill(rejectBgColor);
         dataHorizontal.datasets[1].borderColor = new Array(rejection.length).fill(rejectBorderColor);
-
+      
         this.setState({ dataHorizontal })
         
       })

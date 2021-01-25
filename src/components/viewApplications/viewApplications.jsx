@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Button, Row, Col, Container, Image, Accordion } from "react-bootstrap";
+import { Button, Row, Col, Container } from "react-bootstrap";
 import HeaderHR from "../Header/HeaderHR";
 import ls from "local-storage";
 import Profile from "../viewProfile/Profile";
@@ -21,11 +21,15 @@ class viewApplications extends Component {
   componentDidMount() {
     const userId = ls.get("userid")
     const token = ls.get("token");
+    if(token===null || token===""){
+      window.location.href = "/login"
+    }
     console.log(token)
     fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getAllPresence/" + userId + "/",
       {
         headers: {
-          "Authorization": "Bearer " + token
+          "Content-type": "application/json",
+          "Authorization": token
         }
       })
       .then((response) => response.json())
@@ -154,8 +158,8 @@ class viewApplications extends Component {
 
           {this.state.view.map((a) => (
             <Container>
-            <Profile profile={a} mode={"hr"}/>
-            <br />
+              <Profile profile={a} mode={"hr"} />
+              <br />
               <Row>
                 <Col></Col>
                 <Col>
@@ -163,13 +167,13 @@ class viewApplications extends Component {
                 </Col>
                 <Col>
                 </Col>
-                <Col> 
+                <Col>
                   <Button id="decline" variant="danger" size="lg" onClick={this.handleDecline} block>Decline</Button>
                 </Col>
                 <Col></Col>
-              </Row>        
-            <br />
-            </Container>            
+              </Row>
+              <br />
+            </Container>
           ))}
           <br />
 

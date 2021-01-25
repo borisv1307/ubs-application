@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Image, Container, Button, Col, Row, Alert, Modal, Card, Accordion } from "react-bootstrap";
 import ProfileForm from "../profileForm/profileForm";
 import { MDBIcon } from "mdbreact";
+import ls from "local-storage";
 
 class Profile extends Component {
 
@@ -144,6 +145,10 @@ class Profile extends Component {
   }
 
   componentDidMount() {
+    const token = ls.get("token");
+    if(token===null || token===""){
+      window.location.href = "/login"
+    }
     var profile = this.state.profile;
     var exp = profile.experience;
     exp.forEach((e, i) => {
@@ -169,10 +174,12 @@ class Profile extends Component {
 
   handleSubmit = (e) => {
     var profile = this.state.profile;
+    const token = ls.get("token")
     fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/addPresence/", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
+        "Authorization": token
       },
       body: JSON.stringify(profile),
     })

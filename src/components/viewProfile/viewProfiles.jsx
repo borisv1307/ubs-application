@@ -33,7 +33,8 @@ class ViewProfiles extends Component {
     fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getProfiles/" + userId + "/",
       {
         headers: {
-          "Authorization": "Bearer " + token
+          "Content-type": "application/json",
+          "Authorization": token
         }
       })
       .then((response) => response.json())

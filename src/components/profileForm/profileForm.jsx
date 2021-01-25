@@ -125,6 +125,13 @@ class ProfileForm extends Component{
          });
       }
 
+    componentDidMount() {
+        const token = ls.get("token");
+        if(token===null || token===""){
+          window.location.href = "/login"
+        }
+    }
+
     updateField = (stateKey) => (e) => {
         this.setState({ [stateKey]: e.target.value });
       };
@@ -238,6 +245,7 @@ class ProfileForm extends Component{
         const userId = ls.get("userid")
         const gender = ls.get("gender")
         const ethnicity = ls.get("ethnicity")
+        const token = ls.get("token")
 
         console.log(userId)
         const isValid = this.validateSubmit();
@@ -262,6 +270,7 @@ class ProfileForm extends Component{
             method: "POST",
             headers: {
               "Content-type": "application/json",
+              "Authorization": token
             },
             body: JSON.stringify(data),
           })
@@ -277,7 +286,7 @@ class ProfileForm extends Component{
       };
 
       handleEditSubmit = (mode) => (e) => {
-        
+        const token = ls.get("token")
         const userId = ls.get("userid")
         const gender = ls.get("gender")
         const ethnicity = ls.get("ethnicity")
@@ -305,6 +314,7 @@ class ProfileForm extends Component{
             method: "PUT",
             headers: {
               "Content-type": "application/json",
+              "Authorization": token
             },
             body: JSON.stringify(data),
           })
