@@ -92,9 +92,10 @@ class HomeHR extends Component {
     var rejection_gender = []
     var acceptance_ethnicity = []
     var rejection_ethnicity = []
-    
-    Promise.all([fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id), fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByEthnicity/" + reviewer_id)])
 
+    Promise.all([fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/", {headers: {"Content-type": "application/json", "Authorization": token}}), 
+    fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByEthnicity/" + reviewer_id + "/", {headers: {"Content-type": "application/json", "Authorization": token}})])
+      
       .then(([res1, res2]) => {
         return Promise.all([res1.json(), res2.json()])
 
