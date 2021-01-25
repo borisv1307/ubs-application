@@ -79,8 +79,12 @@ class Home extends Component {
 
     var acceptance = []
     var rejection = []
-
-    fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getAcceptanceRate/" + user_id)
+    fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getAcceptanceRate/" + user_id + "/", {
+      headers: {
+        "Content-type": "application/json",
+        "Authorization": token
+      },
+    })
       .then((res) => res.json())
       .then((res) => {
         dataHorizontal.labels = Object.keys(res)
