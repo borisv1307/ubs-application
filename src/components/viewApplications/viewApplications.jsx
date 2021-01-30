@@ -24,7 +24,7 @@ class viewApplications extends Component {
     if(token===null || token===""){
       window.location.href = "/login"
     }
-    console.log(token)
+    
     fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/getAllPresence/" + userId + "/",
       {
         headers: {
@@ -68,6 +68,11 @@ class viewApplications extends Component {
   }
 
   updateReviewerDetails(status) {
+
+    const token = ls.get("token");
+    if(token===null || token===""){
+      window.location.href = "/login"
+    }
     const reviewerDetails = {
       reviewer_id: ls.get("userid"),
       application_status: status,
@@ -81,6 +86,7 @@ class viewApplications extends Component {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
+        "Authorization": token
       },
       body: JSON.stringify(data),
     });
