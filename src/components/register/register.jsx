@@ -130,7 +130,6 @@ class Register extends Component {
       !this.state.ethnicity ||
       !this.state.date_of_birth ||
       !this.state.address ||
-      !this.state.address2 ||
       !this.state.city ||
       !this.state.state ||
       !this.state.zip ||
@@ -168,7 +167,7 @@ class Register extends Component {
         body: JSON.stringify(data),
       })
         .then((res) => res.json())
-        .then(this.modalShow("An OTP will be sent to your email. It is required for your first login."));
+        .then(this.modalShow("Your account has been created. Please login to validate your account."));
 
       this.setState({
         first_name: "",
@@ -437,7 +436,7 @@ class Register extends Component {
                 </Form.Group>
 
                 <Form.Group>
-                  <Form.Label>Address 2</Form.Label>
+                  <Form.Label>Address 2 (Optional)</Form.Label>
                   <Form.Control
                     type="text"
                     value={this.state.address2}
