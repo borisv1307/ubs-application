@@ -121,7 +121,7 @@ describe("Register", () => {
   
         expect(wrapper.state("error_message")).toEqual("");
         expect(wrapper.state("error_show")).toEqual(false);
-        expect(wrapper.state("modal_message")).toEqual("An OTP will be sent to your email. It is required for your first login.");
+        expect(wrapper.state("modal_message")).toEqual("Your account has been created. Please login to validate your account.");
         expect(wrapper.state("modal_show")).toEqual(true);
       });
     });
@@ -142,7 +142,7 @@ describe("Register", () => {
   
         expect(wrapper.state("error_message")).toEqual("");
         expect(wrapper.state("error_show")).toEqual(false);
-        expect(wrapper.state("modal_message")).toEqual("An OTP will be sent to your email. It is required for your first login.");
+        expect(wrapper.state("modal_message")).toEqual("Your account has been created. Please login to validate your account.");
         expect(wrapper.state("modal_show")).toEqual(true);
       });
     });
