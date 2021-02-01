@@ -159,7 +159,9 @@ class EmailValidation extends Component {
         <Container className="containbody justify-content-center logincard">
           <br />
           <h2 className="text-center">Validate OTP(One Time Passcode)</h2> <br />
-          <h3 className="text-center">Please enter the OTP to verify</h3> <br />
+          <h5 className="text-center">We have sent you the OTP through your email</h5> <br />
+          <h5 className="text-center">Please enter the OTP to verify</h5> <br />
+          
           <Container>
 
             {/* <div className="login-heading hv-center col-12 col-lg-4">Login</div> */}
