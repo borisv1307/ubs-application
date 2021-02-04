@@ -506,6 +506,40 @@ class ProfileForm extends Component{
         );
       };
 
+      deleteEducation = (index) => (e) => {  
+        var edu = this.state.education.slice();
+        var newEducation = [];
+
+        if(edu.length > 1){
+          edu.splice(index, 1);
+          newEducation = edu.slice();
+        }
+    
+        this.setState(
+          {
+            education: newEducation,
+            editState: false,
+          }
+        );
+      };
+
+      deleteExperience = (index) => (e) => {   
+        var exp = this.state.experience.slice();
+        var newExperience = [];
+
+        if(exp.length > 1){
+          exp.splice(index, 1);
+          newExperience = exp.slice();
+        }
+    
+        this.setState(
+          {
+            experience: newExperience,
+            editState: false,
+          }
+        );
+      };
+
 
       setElementID = (name, index) => {
         return name + index
@@ -944,12 +978,24 @@ render() {
                                                     </Button>{" "}
                                                 </Col>
                                                 <Col>
+                                                  <Button
+                                                    id="deleteEducationButton"
+                                                    onClick={this.deleteEducation(
+                                                        index
+                                                    )}
+                                                    variant="warning"
+                                                    >
+                                                    Delete
+                                                  </Button>
+                                                </Col>
+                                                <Col>
                                                     {" "}
                                                     <Button
                                                     id="cancelEditEducationButton"
                                                     onClick={this.toggleEditForm(
                                                         false
                                                     )}
+                                                    variant="danger"
                                                     >
                                                     Cancel
                                                     </Button>{" "}
@@ -1187,11 +1233,23 @@ render() {
                                                         </Button>
                                                     </Col>
                                                     <Col>
+                                                      <Button
+                                                        id="deleteExperienceButton"
+                                                        onClick={this.deleteExperience(
+                                                            index
+                                                        )}
+                                                        variant="warning"
+                                                        >
+                                                        Delete
+                                                      </Button>
+                                                    </Col>
+                                                    <Col>
                                                         <Button
                                                         id="cancelEditExperienceButton"
                                                         onClick={this.toggleEditForm(
                                                             false
                                                         )}
+                                                        variant="danger"
                                                         >
                                                         Cancel
                                                         </Button>
