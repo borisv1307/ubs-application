@@ -12,7 +12,7 @@ class HomeHR extends Component {
     super(props);
     this.state = {
       batch_result: [],
-      btnTitle: 'Batch Number',
+      btnTitle: 'Batch ',
       dataHorizontalGender: {
         labels: ["Male", "Female", "Other", "Prefer not to say"],
         datasets: [
@@ -100,7 +100,7 @@ class HomeHR extends Component {
         if (res.results.length > 0)
           this.loadData(res.results[0]["batch_no"])
         else
-        this.loadData("")
+          this.loadData("")
       })
 
 
@@ -112,30 +112,39 @@ class HomeHR extends Component {
     if (token === null || token === "") {
       window.location.href = "/login"
     }
+
     const reviewer_id = ls.get("userid")
     const batchNo = event;
 
-    const acceptBgColor = "rgba(29, 183, 40, 0.5)"
-    const acceptBorderColor = "rgba(0,  150, 15, 1)"
-    const rejectBgColor = "rgba(240, 30, 30, 0.5)"
-    const rejectBorderColor = "rgba(220, 0, 0, 1)"
+
+    const acceptBgColor = "rgba(29, 183, 40, 0.8)"
+    const acceptBorderColor = "rgba(0,  150, 15,0.8)"
+    const rejectBgColor = "rgba(240, 30, 30, 0.8)"
+    const rejectBorderColor = "rgba(220, 0, 0,0.8)"
     const dataHorizontalGender = this.state.dataHorizontalGender;
     const dataHorizontalEthnicity = this.state.dataHorizontalEthnicity;
     var acceptance_gender = []
     var rejection_gender = []
     var acceptance_ethnicity = []
     var rejection_ethnicity = []
-    var val = "Batch Number : " + event + " "
-    var get_count=""
-    var get_ethnicity=""
 
-    if(event===""){
-      get_count="https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/";
-      get_ethnicity="https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByEthnicity/" + reviewer_id + "/";
+    var batchdate = this.state.batch_result.filter(function (batch) {
+      return batch.batch_no === parseInt(event);
+
+    })
+
+
+    var val = "Batch : " + batchdate[0]["date"] + " "
+    var get_count = ""
+    var get_ethnicity = ""
+
+    if (event === "") {
+      get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/";
+      get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByEthnicity/" + reviewer_id + "/";
     }
-    else{
-      get_count="https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/" + batchNo + "/";
-      get_ethnicity="https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/Ethnicity/" + reviewer_id + "/" + batchNo + "/";
+    else {
+      get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/" + batchNo + "/";
+      get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/Ethnicity/" + reviewer_id + "/" + batchNo + "/";
     }
 
 
@@ -291,7 +300,7 @@ class HomeHR extends Component {
             <DropdownButton id="dropdown-basic-button" title={this.state.btnTitle} onSelect={event => { this.loadData(event) }}>
 
               {this.state.batch_result.map((batch, i) => (
-                <Dropdown.Item eventKey={batch.batch_no} value={batch.batch_no}>{batch.batch_no}</Dropdown.Item>
+                <Dropdown.Item eventKey={batch.batch_no} value={batch.date}>{batch.date}</Dropdown.Item>
               ))}
 
             </DropdownButton>

@@ -50,15 +50,15 @@ class Home extends Component {
 
       barChartOptions: {
         scales: {
-            xAxes: [{
-                stacked: true
-            }],
-            yAxes: [{
-                stacked: true
-            }]
+          xAxes: [{
+            stacked: true
+          }],
+          yAxes: [{
+            stacked: true
+          }]
         }
       }
-      
+
     };
   }
 
@@ -69,12 +69,12 @@ class Home extends Component {
     }
 
     const user_id = ls.get("userid")
-    
-    const acceptBgColor = "rgba(98,  182, 239,0.4)"
-    const acceptBorderColor = "rgba(98,  182, 239, 1)"
-    const rejectBgColor = "rgba(255, 99, 132, 0.2)"
-    const rejectBorderColor = "rgb(255, 99, 132)"
-    
+
+    const acceptBgColor = "rgba(29, 183, 40, 0.8)"
+    const acceptBorderColor = "rgba(0,  150, 15,0.8)"
+    const rejectBgColor = "rgba(240, 30, 30, 0.8)"
+    const rejectBorderColor = "rgba(220, 0, 0,0.8)"
+
     const dataHorizontal = this.state.dataHorizontal;
 
     var acceptance = []
@@ -89,7 +89,7 @@ class Home extends Component {
       .then((res) => {
         dataHorizontal.labels = Object.keys(res)
 
-        Object.keys(res).forEach(function(key) {
+        Object.keys(res).forEach(function (key) {
           acceptance.push(res[key]["accepted"])
           rejection.push(res[key]["declined"])
         });
@@ -97,13 +97,13 @@ class Home extends Component {
         dataHorizontal.datasets[0].data = acceptance;
         dataHorizontal.datasets[0].backgroundColor = new Array(acceptance.length).fill(acceptBgColor);
         dataHorizontal.datasets[0].borderColor = new Array(acceptance.length).fill(acceptBorderColor);
-      
+
         dataHorizontal.datasets[1].data = rejection;
         dataHorizontal.datasets[1].backgroundColor = new Array(rejection.length).fill(rejectBgColor);
         dataHorizontal.datasets[1].borderColor = new Array(rejection.length).fill(rejectBorderColor);
-      
+
         this.setState({ dataHorizontal })
-        
+
       })
 
   }
@@ -125,7 +125,7 @@ class Home extends Component {
               <div>
                 <br />
                 <h3 className="text-center"> Acceptance and Rejection Rates </h3>
-                <HorizontalBarGraph inputData={this.state.dataHorizontal} barChartOptions={this.state.barChartOptions}/>
+                <HorizontalBarGraph inputData={this.state.dataHorizontal} barChartOptions={this.state.barChartOptions} />
               </div>
             </Tab>
             <Tab eventKey="donut" title="Donut">
