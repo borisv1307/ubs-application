@@ -21,7 +21,7 @@ class HorizontalBarGraph extends React.Component {
           <Col xs={10}>
             <HorizontalBar
               data={this.state.dataHorizontal}
-              options={this.state.barChartOptions}
+              // options={this.state.barChartOptions}
               height={this.state.height}
             />
           </Col>
