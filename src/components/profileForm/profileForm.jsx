@@ -64,8 +64,9 @@ class ProfileForm extends Component{
            allErrorState: false,
            eduSuccessState: false,
            expSuccessState: false,
-           allSuccessState: false
+           allSuccessState: false,
            
+           image_validation: 0
         }
     }
 
@@ -120,7 +121,9 @@ class ProfileForm extends Component{
             allErrorState: false,
             eduSuccessState: false,
             expSuccessState: false,
-            allSuccessState: false
+            allSuccessState: false,
+
+            image_validation: 0
             
          });
       }
@@ -226,7 +229,7 @@ class ProfileForm extends Component{
           this.setState({
             alertMessage: "Successfully submitted",
             allErrorState: false,
-            allSuccessState: true,
+            allSuccessState: false,
           });
         }
     
@@ -241,12 +244,36 @@ class ProfileForm extends Component{
         return isValid;
       };
 
-      handleSubmit = (e) => {
+      check_image_validity = async () => {
+            const token = ls.get("token")
+            const userId = ls.get("userid")
+            var return_statement;
+            const profile_image_data =  {
+              user_id: userId,
+              profileImg: this.state.profileImg
+            };
+            const response = await fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/uploadImage/", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "Authorization": token
+            },
+            body: JSON.stringify(profile_image_data),
+          })
+          const json = await response.json();
+          console.log("async/await based");
+          console.log(json);
+
+          this.setState({
+            image_validation: json['Code'],
+          });
+      }
+
+      handleSubmit = async (e) => {
         const userId = ls.get("userid")
         const gender = ls.get("gender")
         const ethnicity = ls.get("ethnicity")
         const token = ls.get("token")
-
         console.log(userId)
         const isValid = this.validateSubmit();
         if (isValid) {
@@ -264,45 +291,43 @@ class ProfileForm extends Component{
             gender: gender,
             ethnicity: ethnicity
           };
-    
           const profile_image_data =  {
             user_id: userId,
             profileImg: this.state.profileImg
           };
-          fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/uploadImage/", {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-              "Authorization": token
-            },
-            body: JSON.stringify(profile_image_data),
-          })
-            .then((res) => res.json())
-            .then((res) => {
-              console.log(res)
-              if(res["Code"] === 1){
-                console.log(JSON.stringify(data));
-                fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/createProfile/", {
-                  method: "POST",
-                  headers: {
-                    "Content-type": "application/json",
-                    "Authorization": token
-                  },
-                  body: JSON.stringify(data),
-                })
-                  .then((res) => res.json())
-                  .then((res) => console.log(res));
-          
+
+          var response = await this.check_image_validity();
+          console.log("IMAGE VALIDATION")
+          console.log(this.state.image_validation)
+          if(this.state.image_validation === 1){
+            console.log(JSON.stringify(data));
+            fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/createProfile/", {
+              method: "POST",
+              headers: {
+                "Content-type": "application/json",
+                "Authorization": token
+              },
+              body: JSON.stringify(data),
+            })
+              .then((res) => res.json())
+              .then((res) => console.log(res))
+              .then(() => {
                 this.reset();
                 this.setState({
-                  alertMessage: "Successfully submitted",
+                  alertMessage: "Successfully submitted presence",
                   allSuccessState: true,
-                });
-              }
-              else{
-                console.log("Invalid Image")
-              }
-            })
+            });
+              })
+          }
+          else{
+            console.log("Invalid Image")
+            this.setState({
+              alertMessage: "Invalid image used. Please upload another image.",
+              allErrorState: true,
+              allSuccessState: false
+            });
+          }
+
         }
       };
 
