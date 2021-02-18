@@ -247,7 +247,6 @@ class ProfileForm extends Component{
       check_image_validity = async () => {
             const token = ls.get("token")
             const userId = ls.get("userid")
-            var return_statement;
             const profile_image_data =  {
               user_id: userId,
               profileImg: this.state.profileImg
@@ -291,14 +290,8 @@ class ProfileForm extends Component{
             gender: gender,
             ethnicity: ethnicity
           };
-          const profile_image_data =  {
-            user_id: userId,
-            profileImg: this.state.profileImg
-          };
 
           var response = await this.check_image_validity();
-          console.log("IMAGE VALIDATION")
-          console.log(this.state.image_validation)
           if(this.state.image_validation === 1){
             console.log(JSON.stringify(data));
             fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/createProfile/", {
@@ -320,7 +313,6 @@ class ProfileForm extends Component{
               })
           }
           else{
-            console.log("Invalid Image")
             this.setState({
               alertMessage: "Invalid image used. Please upload another image.",
               allErrorState: true,
