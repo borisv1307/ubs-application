@@ -36,8 +36,33 @@ class HomeHR extends Component {
           }
         ]
       },
+
       dataHorizontalEthnicity: {
         labels: ["American Indian", "Asian", "Black American", "Hispanic Latino", "Pacific Islander", "White", "Other", "Prefer not to say "],
+        datasets: [
+          {
+            label: 'Acceptance',
+            data: [],
+            fill: false,
+            backgroundColor: [],
+            borderColor: [],
+            borderWidth: 1,
+            stack: '2',
+          },
+          {
+            label: 'Rejection',
+            data: [],
+            fill: false,
+            backgroundColor: [],
+            borderColor: [],
+            borderWidth: 1,
+            stack: '2',
+          }
+        ]
+      },
+
+      dataHorizontalTags: {
+        labels: ["Smiling", "Wearing Glasses", "Wearing Sunglasses", "Bearded"],
         datasets: [
           {
             label: 'Acceptance',
@@ -75,7 +100,6 @@ class HomeHR extends Component {
 
     };
     this.loadData = this.loadData.bind(this);
-
   }
 
 
@@ -116,47 +140,52 @@ class HomeHR extends Component {
     const reviewer_id = ls.get("userid")
     const batchNo = event;
 
-
     const acceptBgColor = "rgba(29, 183, 40, 0.8)"
     const acceptBorderColor = "rgba(0,  150, 15,0.8)"
     const rejectBgColor = "rgba(240, 30, 30, 0.8)"
     const rejectBorderColor = "rgba(220, 0, 0,0.8)"
     const dataHorizontalGender = this.state.dataHorizontalGender;
     const dataHorizontalEthnicity = this.state.dataHorizontalEthnicity;
+    const dataHorizontalTags = this.state.dataHorizontalTags;
     var acceptance_gender = []
     var rejection_gender = []
     var acceptance_ethnicity = []
     var rejection_ethnicity = []
+    var acceptance_tags = []
+    var rejection_tags = []
 
     var batchdate = this.state.batch_result.filter(function (batch) {
       return batch.batch_no === parseInt(event);
-
     })
 
-
     var val = "Batch : " + batchdate[0]["date"] + " "
+    
     var get_count = ""
     var get_ethnicity = ""
+    var get_tags = ""
 
     if (event === "") {
       get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/";
       get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByEthnicity/" + reviewer_id + "/";
+      get_tags = "https://ubs-app-api-dev.herokuapp.com/api/v1/batchesTagsCount/" + reviewer_id + "/";
     }
     else {
       get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/" + batchNo + "/";
       get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/Ethnicity/" + reviewer_id + "/" + batchNo + "/";
+      get_tags = "https://ubs-app-api-dev.herokuapp.com/api/v1/batchesTagsCount/" + reviewer_id + "/" + batchNo + "/";
     }
 
+    console.log("Tags link", get_tags)
 
     Promise.all([fetch(get_count, { headers: { "Content-type": "application/json", "Authorization": token } }),
-    fetch(get_ethnicity, { headers: { "Content-type": "application/json", "Authorization": token } })])
+    fetch(get_ethnicity, { headers: { "Content-type": "application/json", "Authorization": token } }),
+    fetch(get_tags, { headers: { "Content-type": "application/json", "Authorization": token } }),])
 
-      .then(([res1, res2]) => {
-        return Promise.all([res1.json(), res2.json()])
+      .then(([res1, res2, res3]) => {
+        return Promise.all([res1.json(), res2.json(), res3.json()])
 
       })
-      .then(([res1, res2]) => {
-
+      .then(([res1, res2, res3]) => {
 
         Object.keys(res1).forEach(function (key) {
           if (key === "accepted_male_count") {
@@ -260,13 +289,49 @@ class HomeHR extends Component {
         dataHorizontalEthnicity.datasets[1].backgroundColor = new Array(rejection_ethnicity.length).fill(rejectBgColor);
         dataHorizontalEthnicity.datasets[1].borderColor = new Array(rejection_ethnicity.length).fill(rejectBorderColor);
 
-        this.setState({ dataHorizontalGender, dataHorizontalEthnicity })
+        Object.keys(res3).forEach(function (key) {
+          if (key === "smile") {
+            acceptance_tags.push(res3.smile)
+          }
+          else {
+            rejection_tags.push(res3.without_smile)
+          }
+          if (key === "eyeglasses") {
+            acceptance_tags.push(res3.eyeglasses)
+          }
+          else {
+            rejection_tags.push(res3.without_eyeglasses)
+          }
+          if (key === "sun_glasses") {
+            acceptance_tags.push(res3.sun_glasses)
+          }
+          else {
+            rejection_tags.push(res3.without_sun_glasses)
+          }
+          if (key === "beard") {
+            acceptance_tags.push(res3.beard)
+          }
+          else {
+            rejection_tags.push(res3.without_beard)
+          }
+        });
+
+        console.log(res2)
+        console.log(res3)
+
+        dataHorizontalTags.datasets[0].data = acceptance_tags;
+        dataHorizontalTags.datasets[0].backgroundColor = new Array(acceptance_tags.length).fill(acceptBgColor);
+        dataHorizontalTags.datasets[0].borderColor = new Array(acceptance_tags.length).fill(acceptBorderColor);
+
+        dataHorizontalTags.datasets[1].data = rejection_tags;
+        dataHorizontalTags.datasets[1].backgroundColor = new Array(rejection_tags.length).fill(rejectBgColor);
+        dataHorizontalTags.datasets[1].borderColor = new Array(rejection_tags.length).fill(rejectBorderColor);
+
+        this.setState({ dataHorizontalGender, dataHorizontalEthnicity, dataHorizontalTags })
         this.setState({ btnTitle: val });
 
       })
   }
-
-
 
   render() {
     let name = ls.get("name");
@@ -320,6 +385,13 @@ class HomeHR extends Component {
                   <br />
                   <h3 className="text-center"> Ethnicity(category) Insight </h3>
                   <HorizontalBarGraph inputData={this.state.dataHorizontalEthnicity} barChartOptions={this.barChartOptions} />
+                </div>
+              </Tab>
+              <Tab eventKey="ImageTagsInsight" title=" Image Tags(category) Insight ">
+                <div>
+                  <br />
+                  <h3 className="text-center"> Image Tags(category) Insight </h3>
+                  <HorizontalBarGraph inputData={this.state.dataHorizontalTags} barChartOptions={this.barChartOptions} />
                 </div>
               </Tab>
 
