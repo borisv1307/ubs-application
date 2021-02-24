@@ -159,7 +159,6 @@ class HomeHR extends Component {
     })
 
     var val = "Batch : " + batchdate[0]["date"] + " "
-
     var get_count = ""
     var get_ethnicity = ""
     var get_tags = ""
