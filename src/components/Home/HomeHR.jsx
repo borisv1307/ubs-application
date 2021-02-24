@@ -84,7 +84,29 @@ class HomeHR extends Component {
           }
         ]
       },
-
+      dataHorizontalAge: {
+        labels: ["Young", "Middle", "Old"],
+        datasets: [
+          {
+            label: 'Acceptance',
+            data: [],
+            fill: false,
+            backgroundColor: [],
+            borderColor: [],
+            borderWidth: 1,
+            stack: '2',
+          },
+          {
+            label: 'Rejection',
+            data: [],
+            fill: false,
+            backgroundColor: [],
+            borderColor: [],
+            borderWidth: 1,
+            stack: '2',
+          }
+        ]
+      },
       barChartOptions: {
         scales: {
           xAxes: [{
@@ -147,44 +169,53 @@ class HomeHR extends Component {
     const dataHorizontalGender = this.state.dataHorizontalGender;
     const dataHorizontalEthnicity = this.state.dataHorizontalEthnicity;
     const dataHorizontalTags = this.state.dataHorizontalTags;
+    const dataHorizontalAge = this.state.dataHorizontalAge;
     var acceptance_gender = []
     var rejection_gender = []
     var acceptance_ethnicity = []
     var rejection_ethnicity = []
     var acceptance_tags = []
     var rejection_tags = []
+    var acceptance_age = []
+    var rejection_age = []
 
     var batchdate = this.state.batch_result.filter(function (batch) {
       return batch.batch_no === parseInt(event);
     })
 
     var val = "Batch : " + batchdate[0]["date"] + " "
+
     var get_count = ""
     var get_ethnicity = ""
     var get_tags = ""
+    var get_age = ""
 
     if (event === "") {
       get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/";
       get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByEthnicity/" + reviewer_id + "/";
       get_tags = "https://ubs-app-api-dev.herokuapp.com/api/v1/batchesTagsCount/" + reviewer_id + "/";
+      get_age = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByAge/" + reviewer_id + "/";
     }
     else {
       get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/" + batchNo + "/";
       get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/Ethnicity/" + reviewer_id + "/" + batchNo + "/";
       get_tags = "https://ubs-app-api-dev.herokuapp.com/api/v1/batchesTagsCount/" + reviewer_id + "/" + batchNo + "/";
+      get_age = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByAge/" + reviewer_id + "/" + batchNo + "/";
     }
 
-    console.log("Tags link", get_tags)
+
 
     Promise.all([fetch(get_count, { headers: { "Content-type": "application/json", "Authorization": token } }),
     fetch(get_ethnicity, { headers: { "Content-type": "application/json", "Authorization": token } }),
-    fetch(get_tags, { headers: { "Content-type": "application/json", "Authorization": token } }),])
+    fetch(get_tags, { headers: { "Content-type": "application/json", "Authorization": token } }),
+    fetch(get_age, { headers: { "Content-type": "application/json", "Authorization": token } })])
 
-      .then(([res1, res2, res3]) => {
-        return Promise.all([res1.json(), res2.json(), res3.json()])
+      .then(([res1, res2, res3, res4]) => {
+
+        return Promise.all([res1.json(), res2.json(), res3.json(), res4.json()])
 
       })
-      .then(([res1, res2, res3]) => {
+      .then(([res1, res2, res3, res4]) => {
 
         Object.keys(res1).forEach(function (key) {
           if (key === "accepted_male_count") {
@@ -312,9 +343,6 @@ class HomeHR extends Component {
 
         });
 
-        console.log(res2)
-        console.log("this is response 3")
-        console.log(res3)
 
         dataHorizontalTags.datasets[0].data = acceptance_tags;
         dataHorizontalTags.datasets[0].backgroundColor = new Array(acceptance_tags.length).fill(acceptBgColor);
@@ -324,7 +352,38 @@ class HomeHR extends Component {
         dataHorizontalTags.datasets[1].backgroundColor = new Array(rejection_tags.length).fill(rejectBgColor);
         dataHorizontalTags.datasets[1].borderColor = new Array(rejection_tags.length).fill(rejectBorderColor);
 
-        this.setState({ dataHorizontalGender, dataHorizontalEthnicity, dataHorizontalTags })
+
+        Object.keys(res4).forEach(function (key) {
+          if (key === "accepted_young") {
+            acceptance_age.push(res4.accepted_young)
+          }
+          else {
+            rejection_age.push(res4.declined_young)
+          }
+          if (key === "accepted_middle") {
+            acceptance_age.push(res4.accepted_middle)
+          }
+          else {
+            rejection_age.push(res4.declined_middle)
+          }
+          if (key === "accepted_old") {
+            acceptance_age.push(res4.accepted_old)
+          }
+          else {
+            rejection_age.push(res4.declined_old)
+          }
+        });
+        dataHorizontalAge.datasets[0].data = acceptance_age;
+        dataHorizontalAge.datasets[0].backgroundColor = new Array(acceptance_age.length).fill(acceptBgColor);
+        dataHorizontalAge.datasets[0].borderColor = new Array(acceptance_age.length).fill(acceptBorderColor);
+
+        dataHorizontalAge.datasets[1].data = rejection_age;
+        dataHorizontalAge.datasets[1].backgroundColor = new Array(rejection_age.length).fill(rejectBgColor);
+        dataHorizontalAge.datasets[1].borderColor = new Array(rejection_age.length).fill(rejectBorderColor);
+
+
+
+        this.setState({ dataHorizontalGender, dataHorizontalEthnicity, dataHorizontalTags, dataHorizontalAge })
         this.setState({ btnTitle: val });
 
       })
@@ -391,7 +450,13 @@ class HomeHR extends Component {
                   <HorizontalBarGraph inputData={this.state.dataHorizontalTags} barChartOptions={this.barChartOptions} />
                 </div>
               </Tab>
-
+              <Tab eventKey="AgeInsight" title=" Age(category) Insight ">
+                <div>
+                  <br />
+                  <h3 className="text-center"> Age(category) Insight </h3>
+                  <HorizontalBarGraph inputData={this.state.dataHorizontalAge} barChartOptions={this.barChartOptions} />
+                </div>
+              </Tab>
             </Tabs>
 
           </Container>

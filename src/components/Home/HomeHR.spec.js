@@ -24,11 +24,17 @@ describe("HomeHR", () => {
   it("should have h5", () => {
     expect(wrapper.find("h5").length).toEqual(1);
   });
+  it("should have h3", () => {
+    expect(wrapper.find("h3").length).toEqual(4);
+  });
   it("should have div", () => {
-    expect(wrapper.find("div").length).toEqual(3);
+    expect(wrapper.find("div").length).toEqual(5);
   });
   it("should have TAB", () => {
     expect(wrapper.find("Tabs").length).toEqual(1);
+  });
+  it("should have TAB", () => {
+    expect(wrapper.find("Tab").length).toEqual(4);
   });
   it("should have DropdownButton", () => {
     expect(wrapper.find("DropdownButton").length).toEqual(1);
