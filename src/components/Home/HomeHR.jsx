@@ -107,6 +107,29 @@ class HomeHR extends Component {
           }
         ]
       },
+      dataHorizontalEmail: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Acceptance',
+            data: [],
+            fill: false,
+            backgroundColor: [],
+            borderColor: [],
+            stack: '2',
+            borderWidth: 1
+          },
+          {
+            label: 'Rejection',
+            data: [],
+            fill: false,
+            backgroundColor: [],
+            borderColor: [],
+            stack: '2',
+            borderWidth: 1
+          }
+        ]
+      },
       barChartOptions: {
         scales: {
           xAxes: [{
@@ -170,6 +193,7 @@ class HomeHR extends Component {
     const dataHorizontalEthnicity = this.state.dataHorizontalEthnicity;
     const dataHorizontalTags = this.state.dataHorizontalTags;
     const dataHorizontalAge = this.state.dataHorizontalAge;
+    const dataHorizontalEmail = this.state.dataHorizontalEmail;
     var acceptance_gender = []
     var rejection_gender = []
     var acceptance_ethnicity = []
@@ -178,7 +202,9 @@ class HomeHR extends Component {
     var rejection_tags = []
     var acceptance_age = []
     var rejection_age = []
-
+    var acceptance_email = []
+    var rejection_email = []
+    var collect_labels = []
     var batchdate = this.state.batch_result.filter(function (batch) {
       return batch.batch_no === parseInt(event);
     })
@@ -189,18 +215,21 @@ class HomeHR extends Component {
     var get_ethnicity = ""
     var get_tags = ""
     var get_age = ""
+    var get_email = ""
 
     if (event === "") {
       get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/";
       get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByEthnicity/" + reviewer_id + "/";
       get_tags = "https://ubs-app-api-dev.herokuapp.com/api/v1/batchesTagsCount/" + reviewer_id + "/";
       get_age = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByAge/" + reviewer_id + "/";
+      get_email = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/emailDomain/" + reviewer_id + "/";
     }
     else {
       get_count = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/" + reviewer_id + "/" + batchNo + "/";
       get_ethnicity = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/Ethnicity/" + reviewer_id + "/" + batchNo + "/";
       get_tags = "https://ubs-app-api-dev.herokuapp.com/api/v1/batchesTagsCount/" + reviewer_id + "/" + batchNo + "/";
       get_age = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCountByAge/" + reviewer_id + "/" + batchNo + "/";
+      get_email = "https://ubs-app-api-dev.herokuapp.com/api/v1/getCount/emailDomain/" + reviewer_id + "/" + batchNo + "/";
     }
 
 
@@ -208,14 +237,16 @@ class HomeHR extends Component {
     Promise.all([fetch(get_count, { headers: { "Content-type": "application/json", "Authorization": token } }),
     fetch(get_ethnicity, { headers: { "Content-type": "application/json", "Authorization": token } }),
     fetch(get_tags, { headers: { "Content-type": "application/json", "Authorization": token } }),
-    fetch(get_age, { headers: { "Content-type": "application/json", "Authorization": token } })])
+    fetch(get_age, { headers: { "Content-type": "application/json", "Authorization": token } }),
+    fetch(get_email, { headers: { "Content-type": "application/json", "Authorization": token } })
+    ])
 
-      .then(([res1, res2, res3, res4]) => {
+      .then(([res1, res2, res3, res4, res5]) => {
 
-        return Promise.all([res1.json(), res2.json(), res3.json(), res4.json()])
+        return Promise.all([res1.json(), res2.json(), res3.json(), res4.json(), res5.json()])
 
       })
-      .then(([res1, res2, res3, res4]) => {
+      .then(([res1, res2, res3, res4, res5]) => {
 
         Object.keys(res1).forEach(function (key) {
           if (key === "accepted_male_count") {
@@ -339,10 +370,7 @@ class HomeHR extends Component {
             rejection_tags.push(res3.without_facial_hair)
           }
 
-
-
         });
-
 
         dataHorizontalTags.datasets[0].data = acceptance_tags;
         dataHorizontalTags.datasets[0].backgroundColor = new Array(acceptance_tags.length).fill(acceptBgColor);
@@ -383,7 +411,34 @@ class HomeHR extends Component {
 
 
 
-        this.setState({ dataHorizontalGender, dataHorizontalEthnicity, dataHorizontalTags, dataHorizontalAge })
+        if ((Object.keys(res5["accepted"]).length) > Object.keys(res5["rejected"]).length) {
+          dataHorizontalEmail.labels = Object.keys(res5["accepted"])
+        }
+        else {
+          dataHorizontalEmail.labels = Object.keys(res5["rejected"])
+        }
+
+
+
+        Object.keys(res5["accepted"]).forEach(function (key1) {
+          acceptance_email.push(res5["accepted"][key1]);
+        })
+
+        Object.keys(res5["rejected"]).forEach(function (key2) {
+          rejection_email.push(res5["rejected"][key2]);
+        })
+
+
+        dataHorizontalEmail.datasets[0].data = acceptance_email;
+        dataHorizontalEmail.datasets[0].backgroundColor = new Array(acceptance_email.length).fill(acceptBgColor);
+        dataHorizontalEmail.datasets[0].borderColor = new Array(acceptance_email.length).fill(acceptBorderColor);
+
+        dataHorizontalEmail.datasets[1].data = rejection_email;
+        dataHorizontalEmail.datasets[1].backgroundColor = new Array(rejection_email.length).fill(rejectBgColor);
+        dataHorizontalEmail.datasets[1].borderColor = new Array(rejection_email.length).fill(rejectBorderColor);
+
+
+        this.setState({ dataHorizontalGender, dataHorizontalEthnicity, dataHorizontalTags, dataHorizontalAge, dataHorizontalEmail })
         this.setState({ btnTitle: val });
 
       })
@@ -455,6 +510,13 @@ class HomeHR extends Component {
                   <br />
                   <h3 className="text-center"> Age(category) Insight </h3>
                   <HorizontalBarGraph inputData={this.state.dataHorizontalAge} barChartOptions={this.barChartOptions} />
+                </div>
+              </Tab>
+              <Tab eventKey="EmailInsight" title=" Email(category) Insight ">
+                <div>
+                  <br />
+                  <h3 className="text-center"> Email(category) Insight </h3>
+                  <HorizontalBarGraph inputData={this.state.dataHorizontalEmail} barChartOptions={this.barChartOptions} />
                 </div>
               </Tab>
             </Tabs>
