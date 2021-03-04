@@ -64,8 +64,9 @@ class ProfileForm extends Component{
            allErrorState: false,
            eduSuccessState: false,
            expSuccessState: false,
-           allSuccessState: false
+           allSuccessState: false,
            
+           image_validation: 0
         }
     }
 
@@ -120,7 +121,9 @@ class ProfileForm extends Component{
             allErrorState: false,
             eduSuccessState: false,
             expSuccessState: false,
-            allSuccessState: false
+            allSuccessState: false,
+
+            image_validation: 0
             
          });
       }
@@ -156,30 +159,54 @@ class ProfileForm extends Component{
 
     imageHandler = async (e) => {
         const files = e.target.files;
-    
+        var allowedExtensions =  
+                    /(\.jpg|\.jpeg|\.png)$/i;
+
         if (files[0].size < 2000000) {
-          const data = new FormData();
-          data.append("file", files[0]);
-          data.append("upload_preset", "unconsciousbias");
-          const res = await fetch(
-            "	https://api.cloudinary.com/v1_1/unconsciousbiassimulator/image/upload",
-            {
-              method: "POST",
-              body: data,
-            }
-          );
-          const file = await res.json();
-    
-          this.setState(
-            {
-              profileImg: file.secure_url,
-            },
-            () => {
-              console.log("profileImg State:", this.state.profileImg);
-            }
-          );
+
+          if (!allowedExtensions.exec(files[0]['name'])){
+            this.setState({
+              alertMessage: "Invalid image file format. Accepted file formats are PNG or JPEG.",
+              allErrorState: true,
+              allSuccessState: false
+            });
+          }
+
+          else{
+
+            this.setState({
+              allErrorState: false,
+              allSuccessState: false
+            });
+
+            const data = new FormData();
+            data.append("file", files[0]);
+            data.append("upload_preset", "unconsciousbias");
+            const res = await fetch(
+              "	https://api.cloudinary.com/v1_1/unconsciousbiassimulator/image/upload",
+              {
+                method: "POST",
+                body: data,
+              }
+            );
+            const file = await res.json();
+      
+            this.setState(
+              {
+                profileImg: file.secure_url,
+              },
+              () => {
+                console.log("profileImg State:", this.state.profileImg);
+              }
+            );
+          }
+          
         } else {
-          console.log("File is too large");
+          this.setState({
+            alertMessage: "Image size uploaded is too large.",
+            allErrorState: true,
+            allSuccessState: false
+          });
         }
       };
 
@@ -226,7 +253,7 @@ class ProfileForm extends Component{
           this.setState({
             alertMessage: "Successfully submitted",
             allErrorState: false,
-            allSuccessState: true,
+            allSuccessState: false,
           });
         }
     
@@ -241,12 +268,35 @@ class ProfileForm extends Component{
         return isValid;
       };
 
-      handleSubmit = (e) => {
+      check_image_validity = async () => {
+            const token = ls.get("token")
+            const userId = ls.get("userid")
+            const profile_image_data =  {
+              user_id: userId,
+              profileImg: this.state.profileImg
+            };
+            const response = await fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/uploadImage/", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "Authorization": token
+            },
+            body: JSON.stringify(profile_image_data),
+          })
+          const json = await response.json();
+          console.log("async/await based");
+          console.log(json);
+
+          this.setState({
+            image_validation: json['Code'],
+          });
+      }
+
+      handleSubmit = async (e) => {
         const userId = ls.get("userid")
         const gender = ls.get("gender")
         const ethnicity = ls.get("ethnicity")
         const token = ls.get("token")
-
         console.log(userId)
         const isValid = this.validateSubmit();
         if (isValid) {
@@ -264,24 +314,36 @@ class ProfileForm extends Component{
             gender: gender,
             ethnicity: ethnicity
           };
-    
-          console.log(JSON.stringify(data));
-          fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/createProfile/", {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-              "Authorization": token
-            },
-            body: JSON.stringify(data),
-          })
-            .then((res) => res.json())
-            .then((res) => console.log(res));
-    
-          this.reset();
-          this.setState({
-            alertMessage: "Successfully submitted",
-            allSuccessState: true,
-          });
+
+          var response = await this.check_image_validity();
+          if(this.state.image_validation === 1){
+            console.log(JSON.stringify(data));
+            fetch("https://ubs-app-api-dev.herokuapp.com/api/v1/createProfile/", {
+              method: "POST",
+              headers: {
+                "Content-type": "application/json",
+                "Authorization": token
+              },
+              body: JSON.stringify(data),
+            })
+              .then((res) => res.json())
+              .then((res) => console.log(res))
+              .then(() => {
+                this.reset();
+                this.setState({
+                  alertMessage: "Successfully submitted presence",
+                  allSuccessState: true,
+            });
+              })
+          }
+          else{
+            this.setState({
+              alertMessage: "Our system couldn't process your image. It was unable to identify you. Please upload another image.",
+              allErrorState: true,
+              allSuccessState: false
+            });
+          }
+
         }
       };
 
@@ -649,7 +711,13 @@ render() {
                       <Popover id="popover-basic">
                       <Popover.Title as="h3"><strong>Image</strong> requirements</Popover.Title>
                       <Popover.Content>
-                        <strong>Image</strong> should be less than 2 MB in size
+                        <ul>
+                          <li>Should be less than 2 MB in size.</li>
+                          <li>Should be a PNG or JPEG file.</li>
+                          <li>Make sure you are clear and visible in the image.</li>
+                        </ul>
+                        
+                        
                       </Popover.Content>
                       </Popover>
                         }>
@@ -860,24 +928,43 @@ render() {
                                             eventKey={"edu" + index + 1}
                                             >
                                         <Card.Body>
-                                            {edu.eduStartDate} to {edu.eduEndDate}{" "}
-                                            <br />
-                                            {edu.gpa ? (
-                                            <div>GPA: {edu.gpa}</div>
-                                            ) : (
-                                            ""
-                                            )}{" "}
-                                            <br />
+                                            
                                             {!this.state.editState ? (
-                                            <Button
-                                                id="toggleEditEducationButton"
-                                                onClick={this.toggleEditForm(true)}
-                                            >
-                                                Edit
-                                            </Button>
-                                            ) : (
-                                            ""
-                                            )}
+                                            <div>
+                                              {edu.eduStartDate} to {edu.eduEndDate}
+                                              <br />
+                                              {edu.gpa ? (
+                                                <div>GPA: {edu.gpa}</div>
+                                              ) : ("")}
+                                              <br />
+                                              <Row>
+                                                <Col xs={1}></Col>
+                                                <Col>
+                                                <Button
+                                                  id="toggleEditEducationButton"
+                                                  onClick={this.toggleEditForm(true)}
+                                                  block
+                                                >
+                                                    Edit
+                                                </Button>
+                                                </Col>
+                                                <Col xs={1}></Col>
+                                                <Col>
+                                                <Button
+                                                  id="deleteEducationButton"
+                                                  onClick={this.deleteEducation(
+                                                      index
+                                                  )}
+                                                  variant="danger"
+                                                  block
+                                                >
+                                                Delete
+                                                </Button>
+                                                </Col>
+                                                <Col xs={1}></Col>
+                                              </Row>
+                                            </div>
+                                            ) : ("")}
 
                                         {this.state.editState ? (
                                         <div>
@@ -965,41 +1052,30 @@ render() {
                                             <div className="text-center"></div>
                                             </Form>
                                             <Row>
+                                              <Col xs={1}></Col>
                                                 <Col>
-                                                    {" "}
                                                     <Button
-                                                    id="editEducationButton"
-                                                    onClick={this.editEducation(
-                                                        index
-                                                    )}
+                                                      id="editEducationButton"
+                                                      onClick={this.editEducation(index)}
+                                                      block
                                                     >
-                                                    {" "}
-                                                    Save{" "}
-                                                    </Button>{" "}
+                                                    Save
+                                                    </Button>
                                                 </Col>
+                                                <Col xs={1}></Col>
                                                 <Col>
-                                                  <Button
-                                                    id="deleteEducationButton"
-                                                    onClick={this.deleteEducation(
-                                                        index
-                                                    )}
-                                                    variant="warning"
-                                                    >
-                                                    Delete
-                                                  </Button>
-                                                </Col>
-                                                <Col>
-                                                    {" "}
                                                     <Button
-                                                    id="cancelEditEducationButton"
-                                                    onClick={this.toggleEditForm(
-                                                        false
-                                                    )}
-                                                    variant="danger"
+                                                      id="cancelEditEducationButton"
+                                                      onClick={this.toggleEditForm(
+                                                          false
+                                                      )}
+                                                      variant="danger"
+                                                      block
                                                     >
                                                     Cancel
-                                                    </Button>{" "}
+                                                    </Button>
                                                 </Col>
+                                                <Col xs={1}></Col>
                                             </Row>
                                         </div>
                                         ) : ("")}
@@ -1092,19 +1168,15 @@ render() {
                                         <Alert variant="danger">
                                             {this.state.alertMessage}
                                         </Alert>
-                                        ) : (
-                                        " "
-                                        )}
+                                        ) : (" ")}
                                         {this.state.expSuccessState ? (
                                         <Alert variant="success">
                                             {this.state.alertMessage}
                                         </Alert>
-                                        ) : (
-                                        " "
-                                        )}
+                                        ) : (" ")}
                                         <Button
-                                        id="addExperienceButton"
-                                        onClick={this.addExperience}
+                                          id="addExperienceButton"
+                                          onClick={this.addExperience}
                                         >
                                         Add Experience
                                         </Button>
@@ -1136,17 +1208,36 @@ render() {
                                             eventKey={"exp" + index + 1}
                                             >
                                             <Card.Body>
-                                                {exp.location} <br />
-                                                {exp.expStartDate} to {exp.expEndDate}{" "}
-                                                <br />
+                                                
                                                 {!this.state.editState ? (
-                                                <Button
-                                                    id="toggleEditExperienceButton"
-                                                    onClick={this.toggleEditForm(true)}
-                                                >
-                                                    {" "}
-                                                    Edit{" "}
-                                                </Button>
+                                                <div>
+                                                  {exp.location} <br />
+                                                  {exp.expStartDate} to {exp.expEndDate}<br /> <br />
+                                                  <Row>
+                                                    <Col xs={1}></Col>
+                                                    <Col>
+                                                    <Button
+                                                      id="toggleEditExperienceButton"
+                                                      onClick={this.toggleEditForm(true)}
+                                                      block
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                    </Col>
+                                                    <Col xs={1}></Col>
+                                                    <Col>
+                                                      <Button
+                                                        id="deleteExperienceButton"
+                                                        onClick={this.deleteExperience(index)}
+                                                        variant="danger"
+                                                        block
+                                                      >
+                                                        Delete
+                                                      </Button>
+                                                    </Col>
+                                                    <Col xs={1}></Col>
+                                                  </Row>
+                                                </div>
                                                 ) : (
                                                 ""
                                                 )}
@@ -1222,38 +1313,28 @@ render() {
                                                     </Form.Row>
                                                     </Form>
                                                     <Row>
+                                                    <Col xs={1}></Col>
                                                     <Col>
                                                         <Button
-                                                        id="editExperienceButton"
-                                                        onClick={this.editExperience(
-                                                            index
-                                                        )}
+                                                          id="editExperienceButton"
+                                                          onClick={this.editExperience(index)}
+                                                          block
                                                         >
                                                         Save
                                                         </Button>
                                                     </Col>
-                                                    <Col>
-                                                      <Button
-                                                        id="deleteExperienceButton"
-                                                        onClick={this.deleteExperience(
-                                                            index
-                                                        )}
-                                                        variant="warning"
-                                                        >
-                                                        Delete
-                                                      </Button>
-                                                    </Col>
+                                                    <Col xs={1}></Col>
                                                     <Col>
                                                         <Button
-                                                        id="cancelEditExperienceButton"
-                                                        onClick={this.toggleEditForm(
-                                                            false
-                                                        )}
-                                                        variant="danger"
+                                                          id="cancelEditExperienceButton"
+                                                          onClick={this.toggleEditForm(false)}
+                                                          variant="danger"
+                                                          block
                                                         >
                                                         Cancel
                                                         </Button>
                                                     </Col>
+                                                    <Col xs={1}></Col>
                                                     </Row>
                                                 </div>
                                                 ) : (
