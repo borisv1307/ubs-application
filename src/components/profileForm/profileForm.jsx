@@ -338,7 +338,7 @@ class ProfileForm extends Component{
           }
           else{
             this.setState({
-              alertMessage: "Our system couldn't process your image. It was unable to identify you. Please upload another image.",
+              alertMessage: "Our system couldn't process your image . Please uploud another image.",
               allErrorState: true,
               allSuccessState: false
             });

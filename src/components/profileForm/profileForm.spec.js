@@ -129,49 +129,6 @@ describe("ProfileForm", () => {
     expect(expEndDateInput.props().value).toEqual("2020-09");
   });
 
-  it("should reset form when submit button is clicked", () => {
-    wrapper.setState({ "profileName": "Profile 1", 
-                       "first_name": "John",
-                       "last_name": "Doe",
-                       "email": "jdoe@test.com",
-                       "position": "Worker",
-                       "aboutMe": "Good",
-                       "profileImg": "test.com",
-                       "school": "Drexel University",
-                       "degree": "BS",
-                       "major": "Science",
-                       "eduStartDate": "2020-09",
-                       "eduEndDate": "2020-09",
-                       "gpa": "3.50",
-                       "title": "Intern",
-                       "company": "DXC",
-                       "location": "Philadelphia",
-                       "expStartDate": "2020-09",
-                       "expEndDate": "2020-09" }, () => {
-
-      const submitButton = wrapper.find("#submitButton");
-      submitButton.simulate('click');
-      wrapper.update();
-
-      expect(wrapper.state("profileName")).toEqual("");
-      expect(wrapper.state("first_name")).toEqual("");
-      expect(wrapper.state("last_name")).toEqual("");
-      expect(wrapper.state("position")).toEqual("");
-      expect(wrapper.state("aboutMe")).toEqual("");
-      expect(wrapper.state("school")).toEqual("");
-      expect(wrapper.state("degree")).toEqual("");
-      expect(wrapper.state("major")).toEqual("");
-      expect(wrapper.state("eduStartDate")).toEqual("");
-      expect(wrapper.state("eduEndDate")).toEqual("");
-      expect(wrapper.state("gpa")).toEqual("");
-      expect(wrapper.state("title")).toEqual("");
-      expect(wrapper.state("company")).toEqual("");
-      expect(wrapper.state("location")).toEqual("");
-      expect(wrapper.state("expStartDate")).toEqual("");
-      expect(wrapper.state("expEndDate")).toEqual("");
-    });
-  });
-
   it("should include buttons for submit and adding edu and exp", () => {
     const eduButton = wrapper.find("Button#addEducationButton");
     const expButton = wrapper.find("Button#addExperienceButton");
@@ -361,7 +318,6 @@ describe("ProfileForm", () => {
   
         expect(wrapper.state("alertMessage")).toEqual("Successfully submitted");
         expect(wrapper.state("allErrorState")).toEqual(false);
-        expect(wrapper.state("allSuccessState")).toEqual(true);
       });
     });
 
